@@ -22,6 +22,7 @@ namespace AzureHackTrainWebApplication.Controllers
             trains = ConvertTrainsXmlToTrainsObject();
         }
 
+        //http://azurehacktrainwebapplication.azurewebsites.net/getTrainListOnStationCode?fromStationCode=cbe&toStationCode=hyb
         //http://localhost:64548/getTrainListOnStationCode?fromStationCode=cbe&toStationCode=hyb
         [Route("getTrainListOnStationCode")]
         public JsonResult<List<Train>> GetTrainListOnStationCode(string fromStationCode, string toStationCode)
@@ -39,8 +40,18 @@ namespace AzureHackTrainWebApplication.Controllers
                         x.TrainRecord.TrainScheduleItem.Find(y => y.StationCode.Equals(fromStationCode)),
                         x.TrainRecord.TrainScheduleItem.Find(y => y.StationCode.Equals(toStationCode)))));
 
+            AddTrainFare_SeatAvailability(trainList, fromStationCode, toStationCode);
+
             return Json(trainList);
         }
+
+
+        private void AddTrainFare_SeatAvailability(List<Train> trainList, string fromStationCode, string toStationCode)
+        {
+            ErailApi erailApi = new ErailApi(trainList, fromStationCode, toStationCode);
+            erailApi.AddTrainFare_SeatAvailability();
+        }
+
 
         private bool IsFromStationDayTimeLessThanToStationDayTime(TrainScheduleItem fromStationTrainScheduleItem, TrainScheduleItem toStationTrainScheduleItem)
         {
@@ -55,6 +66,7 @@ namespace AzureHackTrainWebApplication.Controllers
             return TimeSpan.Compare(fromStationDepatureTime, toStationDepatureTime) < 0;
         }
 
+        //http://azurehacktrainwebapplication.azurewebsites.net/getTrainOnTrainNumber?trainNumber=12647
         //http://localhost:64548/getTrainOnTrainNumber?trainNumber=12647
         [Route("getTrainOnTrainNumber")]
         public JsonResult<Train> GetTrainOnTrainNumber(string trainNumber)

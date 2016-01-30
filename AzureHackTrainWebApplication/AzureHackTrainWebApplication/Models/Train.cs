@@ -104,6 +104,10 @@ namespace AzureHackTrainWebApplication.Models
         public TrainRecord TrainRecord { get; set; }
         [XmlElement(ElementName = "TrainDetails")]
         public TrainDetails TrainDetails { get; set; }
+        public TrainFare TrainFare;
+        public TrainSeatAvailability TrainSeatAvailability;
+        //public string TrainFare;
+        //public string TrainSeatAvailability;
     }
 
     [XmlRoot(ElementName = "ClassesAvailable")]
